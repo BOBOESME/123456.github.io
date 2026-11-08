@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fffbf0" />
+<title>温州小金砖细支投放户 · 数据看板</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+  if (typeof XLSX === 'undefined') {
+    document.write('<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#fffbf0;
+  --card:#ffffff;
+  --line:#f2ead5;
+  --line-strong:#e8dcb8;
+  --text:#2c2618;
+  --sub:#8b7b5b;
+  --gold:#d4af37;
+  --gold-deep:#b8860b;
+  --gold-darker:#8b6508;
+  --gold-soft:#fcf6e3;
+  --orange:#d97706;
+  --green:#3f8f5a;
+  --red:#c0392b;
+  --purple:#7c3aed;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(139,101,8,.05),0 14px 32px -20px rgba(139,101,8,.45);
+  --swallow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37'%3E%3Cpath d='M22 4c-1 2-2 4-5 5 2 1 4 3 5 5-2-1-4-2-7-1 0 3 1 5 3 7-3-1-5-3-7-6-2 3-4 5-7 6 2-2 3-4 3-7-3-1-5 0-7 1 1-2 3-4 5-5-3-1-4-3-5-5 3 1 5 2 7 5 0-3-1-5-3-7 3 1 5 3 7 6 2-3 4-5 7-6-2 2-3 4-3 7 2-3 4-4 7-5z'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;color:var(--text);font-size:14px;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+  min-height:100vh;touch-action:manipulation;
+  background:
+    radial-gradient(900px 420px at 8% -8%, #fef4d8 0%, rgba(254,244,216,0) 70%),
+    radial-gradient(900px 420px at 92% -8%, #fdf0cd 0%, rgba(253,240,205,0) 70%),
+    var(--bg);
+  background-attachment:fixed;
+}
+.app-shell{max-width:1200px;margin:0 auto;padding:16px 20px 0;}
+
+/* ---------- 顶部 ---------- */
+.app-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px;}
+.brand{display:flex;align-items:center;gap:13px;min-width:0;}
+.logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#fceabb,#d4af37);
+  color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;letter-spacing:-1px;flex:0 0 auto;
+  box-shadow:0 10px 22px -12px rgba(212,175,55,.95);}
+h1{font-size:17px;margin:0 0 3px;font-weight:700;}
+.sub{color:var(--sub);font-size:12px;line-height:1.4;}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.icon-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  border:1px solid var(--line-strong);background:#fff;color:#6b5b32;border-radius:11px;
+  padding:8px 12px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;
+  min-width:58px;min-height:44px;transition:.15s;user-select:none;}
+.icon-btn svg{width:19px;height:19px;color:var(--gold-deep);}
+.icon-btn:hover{border-color:var(--gold);background:#fffdf6;color:var(--gold-deep);}
+.icon-btn.primary{background:linear-gradient(135deg,#e8cc6b,#d4af37);border-color:transparent;color:#fff;
+  box-shadow:0 8px 20px -12px rgba(212,175,55,.95);}
+.icon-btn.primary svg{color:#fff;}
+
+/* ---------- 页面 ---------- */
+.app-main{padding-bottom:108px;}
+.page{display:none;}
+.page.active{display:block;animation:pageIn .24s ease both;}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ---------- 概览 - 产品主视觉 ---------- */
+.hero{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  background:linear-gradient(120deg,#fffef9 0%,#fdf8eb 55%,#fcf4dd 100%);
+  border:1px solid var(--line-strong);border-radius:16px;padding:20px 22px;margin-bottom:16px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;right:15px;top:15px;width:40px;height:40px;
+  background-image:var(--swallow);background-size:contain;background-repeat:no-repeat;
+  opacity:0.15;transform:rotate(-15deg);pointer-events:none;
+}
+.hero::after{
+  content:"";position:absolute;left:-30px;bottom:-30px;width:120px;height:120px;
+  background-image:var(--swallow);background-size:contain;background-repeat:no-repeat;
+  opacity:0.06;transform:rotate(45deg);pointer-events:none;
+}
+.hero-content{display:flex;align-items:center;gap:24px;position:relative;z-index:1;width:100%;}
+.hero-product{
+  width:120px;height:200px;flex:0 0 auto;
+  border-radius:12px;background:#fdf9ef;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 12px 24px -12px rgba(139,101,8,.4), inset 0 0 20px rgba(212,175,55,.1);
+  position:relative;overflow:hidden;perspective:1000px;
+}
+.hero-product img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 12px rgba(0,0,0,0.15));transform:translateZ(20px);}
+.hero-product::before{content:"产品图片";position:absolute;color:var(--gold);font-size:12px;opacity:0.5;z-index:0;}
+.hero-info{flex:1;min-width:0;}
+.hero-title{font-size:20px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em;word-break:break-word;color:#3d2e0a;}
+.hero-sub{color:var(--sub);font-size:13px;line-height:1.6;word-break:break-word;margin-bottom:12px;}
+.hero-stats{display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;position:relative;z-index:1;width:100%;}
+.hstat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;box-shadow:0 4px 10px -8px rgba(139,101,8,.4);}
+.hstat .k{font-size:11px;color:var(--sub);font-weight:600;}
+.hstat .v{font-size:15px;font-weight:800;margin-top:2px;color:#5c470d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ---------- KPI ---------- */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+.kpi{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;
+  position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(139,101,8,.04);}
+.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand);opacity:.9;}
+.kpi .label{color:var(--sub);font-size:12px;font-weight:600;}
+.kpi .value{font-size:21px;font-weight:800;margin-top:7px;letter-spacing:-.02em;line-height:1.15;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi .value.small{font-size:15px;}
+.kpi .hint{font-size:11.5px;color:var(--sub);margin-top:6px;line-height:1.4;}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px;margin-bottom:16px;}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.card-head h2{font-size:15px;margin:0;font-weight:700;display:flex;align-items:center;gap:8px;}
+.card-head h2::before{content:"";width:4px;height:15px;border-radius:3px;
+  background:linear-gradient(180deg,#fceabb,#d4af37);display:inline-block;flex:0 0 auto;}
+.chart-box{position:relative;}
+.tag{font-size:12px;color:var(--gold-darker);background:var(--gold-soft);padding:4px 10px;border-radius:999px;
+  font-weight:600;}
+
+/* ---------- 筛选 & 表格 ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px;}
+.input{border:1px solid var(--line-strong);background:#fff;border-radius:9px;padding:8px 11px;font-size:13px;
+  outline:none;min-width:118px;font-family:inherit;color:var(--text);min-height:38px;}
+.input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.14);}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px; -webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+.cust-table{min-width:1200px;}
+.price-table{min-width:auto;}
+.data-table{min-width:auto;}
+th,td{padding:11px 13px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:top;}
+th{background:#fdf9ef;color:var(--sub);font-weight:600;font-size:12px;position:sticky;top:0;z-index:2;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#fffdf6;}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
+.cust-name{font-weight:700;}
+.cust-sub{font-size:11px;color:var(--sub);margin-top:4px;}
+
+/* 认证状态徽章 */
+.badge.verified { background: #eef7e9; color: #3f7f45; border: 1px solid #d4e8d0; }
+.badge.unverified { background: #f4f1e8; color: #8b7b5b; border: 1px solid #e8e2d5; }
+
+/* 客户类型徽章 */
+.badge.type-A { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.badge.type-B { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.badge.type-C { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+.badge.type-D { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+/* 投放徽章 */
+.badge.delivery-none { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.badge.delivery-active { background: #eef7e9; color: #3f7f45; border: 1px solid #bbf7d0; }
+
+/* 活动标签 */
+.act-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-right: 4px; margin-bottom: 4px; }
+.act-tag.good3 { background: #fff5e5; color: #b45309; border: 1px solid #fde68a; }
+.act-tag.bird { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.act-tag .scan-badge { background: #fff; padding: 0 5px; border-radius: 4px; color: #b91c1c; font-weight: 800; border: 1px solid #fecaca; }
+
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;}
+.muted{color:var(--sub);}
+
+/* 上传区域 */
+.upload-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  border:1.5px dashed var(--line-strong);border-radius:13px;background:#fffdf8;
+  padding:26px 16px;cursor:pointer;transition:.18s;text-align:center;}
+.upload-zone:hover{border-color:var(--gold);background:#fffdf4;}
+.upload-zone svg{width:30px;height:30px;color:var(--gold);}
+.uz-title{font-size:14px;font-weight:700;color:#6b5b32;}
+.uz-hint{font-size:11.5px;color:var(--sub);}
+
+/* ---------- 排名徽章 ---------- */
+.rank{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 7px;border-radius:9px;
+  font-weight:800;font-size:12.5px;background:#f6f1e3;color:#9a8a66;font-variant-numeric:tabular-nums;
+  border:1px solid var(--line);}
+.rank.top1{background:linear-gradient(135deg,#fceabb,#d4af37);color:#fff;border-color:transparent;box-shadow:0 6px 14px -8px rgba(212,175,55,.95);}
+.rank.top2{background:linear-gradient(135deg,#f0e1bc,#cdb27d);color:#fff;border-color:transparent;box-shadow:0 6px 14px -8px rgba(205,178,125,.9);}
+.rank.top3{background:linear-gradient(135deg,#e6cba3,#b8955c);color:#fff;border-color:transparent;box-shadow:0 6px 14px -8px rgba(184,149,92,.9);}
+.crown{font-size:12px;margin-left:5px;}
+
+/* ---------- 素材 ---------- */
+.material-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px;}
+.mat-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fffdf8;transition:.18s;}
+.mat-card:hover{box-shadow:0 10px 24px -16px rgba(139,101,8,.55);transform:translateY(-2px);border-color:var(--line-strong);}
+.mat-thumb{height:104px;background:#f6efdd;display:grid;place-items:center;overflow:hidden;}
+.mat-thumb img,.mat-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
+.mat-body{padding:10px 11px 4px;}
+.mat-name{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mat-meta{font-size:11px;color:var(--sub);margin-top:3px;}
+.mat-actions{display:flex;gap:6px;padding:8px 11px 11px;}
+.mat-actions button{flex:1;border:1px solid var(--line-strong);background:#fff;border-radius:8px;padding:8px 0;
+  font-size:12px;cursor:pointer;font-family:inherit;color:#6b5b32;font-weight:600;min-height:36px;}
+.mat-actions button:hover{border-color:var(--gold);color:var(--gold-deep);background:#fffdf6;}
+.empty-tip{padding:26px 16px;text-align:center;color:var(--sub);font-size:13px;}
+
+/* ---------- 分页控件 ---------- */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 16px 0 4px; flex-wrap: wrap; }
+.page-btn { border: 1px solid var(--line-strong); background: #fff; color: var(--text); border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.page-btn:hover:not(:disabled):not(.active) { border-color: var(--gold); color: var(--gold-deep); background: #fffdf6; }
+.page-btn.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #f5f5f5; }
+.page-ellipsis { color: var(--sub); font-weight: 600; font-size: 12px; }
+.page-info { font-size: 12px; color: var(--sub); margin-left: 8px; font-weight: 600; }
+
+/* ---------- 底部导航 ---------- */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  display:flex;align-items:flex-end;justify-content:space-around;gap:2px;
+  background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));
+  box-shadow:0 -8px 24px -20px rgba(139,101,8,.6);
+}
+.tab-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;
+  background:none;border:none;font-family:inherit;font-size:11px;font-weight:600;
+  color:#a6997a;cursor:pointer;padding:6px 2px 5px;border-radius:14px;
+  transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent;min-height:52px;
+}
+.tab-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s;}
+.tab-item.active{color:var(--gold-deep);}
+.tab-item.active svg{stroke-width:2.1;}
+.tab-item:active svg{transform:scale(.92);}
+
+.tab-item.tab-main{justify-content:center;padding-top:0;}
+.tab-item.tab-main .icon-badge{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;margin-top:-16px;
+  background:linear-gradient(135deg,#fceabb,#d4af37);color:#fff;border:2.5px solid #fff;
+  box-shadow:0 10px 20px -10px rgba(212,175,55,.95);transition:transform .18s;
+}
+.tab-item.tab-main .icon-badge svg{width:20px;height:20px;stroke:#fff;stroke-width:2;}
+.tab-item.tab-main .tab-label{margin-top:2px;}
+.tab-item.tab-main.active .icon-badge{background:linear-gradient(135deg,#e8cc6b,#b8860b);transform:translateY(-2px) scale(1.04);}
+.tab-item.tab-main:active .icon-badge{transform:scale(.94);}
+
+@media(min-width:641px){
+  .tabbar{left:50%;right:auto;transform:translateX(-50%);bottom:18px;width:min(660px,calc(100% - 48px));border:1px solid var(--line-strong);border-radius:24px;padding:7px 10px;box-shadow:0 20px 44px -24px rgba(139,101,8,.55);}
+  .app-main{padding-bottom:120px;}
+  .tab-item.tab-main .icon-badge{margin-top:-12px;}
+}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;bottom:104px;transform:translate(-50%,20px);background:#3d2e0a;color:#fff;
+  padding:11px 20px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:99;
+  max-width:calc(100% - 40px);text-align:center;line-height:1.5;}
+#toast.show{opacity:1;transform:translate(-50%,0);}
+@media(min-width:641px){#toast{bottom:124px;}}
+
+/* 触屏去掉 hover 位移 */
+@media(hover:none){
+  .icon-btn:hover{transform:none;background:#fff;}
+  .icon-btn.primary:hover{background:linear-gradient(135deg,#e8cc6b,#d4af37);}
+  .mat-card:hover{transform:none;box-shadow:none;}
+  .icon-btn:active{background:#fdf6e3;}
+  .mat-actions button:active{background:#fdf6e3;}
+  .upload-zone:hover{border-color:var(--line-strong);background:#fffdf8;}
+}
+
+/* =========================================================
+ * 移动端适配
+ * =======================================================*/
+@media (max-width: 820px){
+  .hero-content{flex-direction:column;text-align:center;gap:16px;}
+  .hero-stats{grid-template-columns:repeat(2, 1fr);}
+  .hero-product{width:100px;height:170px;}
+}
+
+@media (max-width: 640px){
+  body{font-size:13.5px;}
+  .app-shell{padding:12px 13px 0;}
+
+  .app-header{flex-wrap:nowrap;align-items:center;gap:8px;margin-bottom:13px;}
+  .brand{gap:9px;flex:1;min-width:0;}
+  .logo{width:36px;height:36px;font-size:15px;border-radius:11px;}
+  h1{font-size:14.5px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sub{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .header-actions{gap:6px;flex:0 0 auto;}
+  .icon-btn{min-width:44px;padding:7px 8px;font-size:10px;border-radius:10px;min-height:42px;gap:2px;}
+  .icon-btn svg{width:17px;height:17px;}
+
+  .hero{padding:16px;border-radius:14px;margin-bottom:13px;}
+  .hero-product{width:90px;height:150px;margin-bottom:8px;}
+  .hero-title{font-size:17px;line-height:1.35;}
+  .hero-sub{font-size:11.5px;margin-bottom:10px;}
+  .hero-stats{gap:8px;}
+  .hstat{padding:8px 12px;border-radius:10px;}
+  .hstat .k{font-size:10.5px;}
+  .hstat .v{font-size:14px;}
+
+  .card{padding:14px;border-radius:13px;margin-bottom:13px;}
+  .card-head{gap:8px;margin-bottom:12px;}
+  .card-head h2{font-size:14.5px;}
+  .card-head h2::before{height:14px;width:3.5px;}
+  .card-head .tag{font-size:10.5px;padding:3px 8px;white-space:normal;line-height:1.45;}
+
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+  .kpi{padding:11px 11px 10px;border-radius:11px;}
+  .kpi .label{font-size:11px;}
+  .kpi .value{font-size:17px;margin-top:5px;}
+  .kpi .value.small{font-size:12.5px;}
+  .kpi .hint{font-size:10.5px;margin-top:5px;}
+
+  .chart-box{height:auto;}
+  .home-chart{height:190px !important;}
+  .region-chart{height:210px !important;}
+  .act-chart{height:230px !important;}
+
+  .filters{width:100%;gap:7px;margin-bottom:12px;}
+  .filters .input{font-size:16px;min-height:42px;flex:1 1 calc(50% - 4px);min-width:0;padding:8px 10px;}
+  .filters #searchInput{flex:1 1 100%;}
+
+  /* 表格卡片化 */
+  .table-wrap{max-height:none;overflow:visible;border:none;border-radius:0;}
+  .cust-table, .price-table, .data-table{min-width:0;}
+  .cust-table thead, .price-table thead, .data-table thead{display:none;}
+  .cust-table tbody, .price-table tbody, .data-table tbody{display:block;}
+
+  .cust-table tr, .price-table tr, .data-table tr{
+    display:grid;gap:11px 14px;border:1px solid var(--line);border-radius:13px;
+    background:#fffdf8;padding:13px 14px;margin-bottom:10px;position:relative;
+  }
+  .cust-table tr{grid-template-columns:1fr 1fr;}
+  .price-table tr{grid-template-columns:1fr 1fr;}
+  .data-table tr{grid-template-columns:1fr 1fr 1fr;}
+  .cust-table tbody tr:hover, .price-table tbody tr:hover, .data-table tbody tr:hover{background:#fffdf8;}
+
+  .cust-table td, .price-table td, .data-table td{display:block;border:none;padding:0;white-space:normal;text-align:left;}
+  .cust-table td.num, .price-table td.num, .data-table td.num{text-align:left;}
+  .cust-table td::before, .price-table td::before, .data-table td::before{
+    display:block;content:attr(data-label);font-size:10.5px;color:var(--sub);
+    font-weight:700;margin-bottom:3px;letter-spacing:.02em;
+  }
+
+  .cust-table td.c-rank{position:absolute;top:12px;right:12px;width:auto;}
+  .cust-table td.c-rank::before{display:none;}
+  .cust-table td.c-name{grid-column:1/-1;padding-right:50px;}
+  .cust-table td.c-name::before{display:none;}
+  
+  /* 移动端表格布局微调：让本周投放和本月已投放并排 */
+  .cust-table td[data-label="参与活动"],
+  .cust-table td[data-label="零消/拆条"] { grid-column: 1/-1; }
+  
+  .cust-table td[data-label="零消/拆条"] > div {
+    justify-content: flex-start;
+    background: #fcf6e3;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+
+  .price-table td.c-channel{grid-column:1/-1;font-size:14.5px;}
+  .price-table td.c-channel::before{display:none;}
+
+  .data-table td.c-month{grid-column:1/-1;font-size:14.5px;}
+  .data-table td.c-month::before{display:none;}
+
+  .material-grid{grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;}
+  .mat-thumb{height:88px;}
+  .mat-name{font-size:12px;}
+  .mat-meta{font-size:10.5px;}
+  .mat-actions button{min-height:38px;font-size:12px;}
+  .upload-zone{padding:22px 14px;}
+
+  /* 分页控件移动端适配 */
+  .pagination { padding: 12px 0 8px; gap: 4px; }
+  .page-btn { padding: 5px 10px; font-size: 12px; }
+  .page-info { width: 100%; text-align: center; margin-left: 0; margin-top: 4px; }
+
+  #toast{bottom:96px;padding:10px 16px;font-size:12.5px;}
+}
+
+@media (max-width: 360px){
+  .kpi-grid{grid-template-columns:1fr;}
+  .filters .input{flex:1 1 100%;}
+  .icon-btn{min-width:40px;padding:6px 6px;}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">温</div>
+      <div style="min-width:0;">
+        <h1>小金砖细支投放户看板</h1>
+        <div class="sub">温州地区 · 数据实时监控</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <label class="icon-btn primary" title="上传 Excel">
+        <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+        <span>导入</span>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden>
+      </label>
+      <button class="icon-btn" id="exportBtn" title="导出 Excel">
+        <svg viewBox="0 0 24 24"><path d="M12 4v12m0 0l5-5m-5 5l-5-5"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+        <span>导出</span>
+      </button>
+      <!-- 新增：重置按钮 -->
+      <button class="icon-btn" id="resetBtn" title="清空本地数据">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        <span>重置</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ========== 概览 ========== -->
+    <section class="page active" id="page-home">
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-product">
+            <img src="product.png" alt="小金砖" onerror="this.style.display='none'">
+          </div>
+          <div class="hero-info">
+            <div class="hero-title" id="productName">温州小金砖细支</div>
+            <div class="hero-sub" id="productSub">小金砖 · 细支 · 温州区域投放数据</div>
+            <div class="hero-stats" id="heroStats"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="kpi-grid" id="homeKpiGrid"></div>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>扫码数量趋势</h2>
+          <span class="tag" id="trendTag">—</span>
+        </div>
+        <div class="chart-box home-chart" style="height:240px;"><canvas id="salesChart"></canvas></div>
+      </section>
+    </section>
+
+    <!-- ========== 数据 ========== -->
+    <section class="page" id="page-data">
+      <div class="kpi-grid" id="dataKpiGrid"></div>
+
+      <section class="card">
+        <div class="card-head"><h2>客户类型分布</h2></div>
+        <div class="chart-box region-chart" style="height:260px;"><canvas id="regionChart"></canvas></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>各区县客户数量</h2></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>区县</th><th class="num">客户数</th><th class="num">已认证</th><th class="num">扫码总计</th></tr>
+            </thead>
+            <tbody id="salesTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- ========== 价格 ========== -->
+    <section class="page" id="page-price">
+      <div class="kpi-grid" id="priceKpiGrid"></div>
+      <section class="card">
+        <div class="card-head">
+          <h2>渠道价格状态</h2>
+          <span class="tag" id="priceTag">—</span>
+        </div>
+        <div class="table-wrap">
+          <table class="price-table">
+            <thead>
+              <tr><th>渠道</th><th class="num">指导价</th><th class="num">当前价</th><th class="num">折扣率</th><th>状态</th></tr>
+            </thead>
+            <tbody id="priceBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- ========== 活动 ========== -->
+    <section class="page" id="page-act">
+      <!-- 专属活动数据上传 -->
+      <section class="card">
+        <div class="card-head">
+          <h2>投放户数据导入</h2>
+          <label class="btn small primary" style="font-size:12px; padding:6px 12px; border-radius:8px; display:inline-flex; align-items:center; gap:4px; cursor:pointer; background:var(--gold); color:#fff; border:none;">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;"><path d="M12 16V4m0 0L7 9m5-5l5 5"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            上传表格
+            <input type="file" id="actFileInput" accept=".xlsx,.xls,.csv" hidden>
+          </label>
+        </div>
+        <div class="muted" style="font-size:12px; line-height:1.5;">
+          支持的表头：<strong>店招名称、客户编码、负责人、经营者电话、客户分类、行政区划、是否已认证、扫码数量、零消数量、拆条数量、客户类型、好事成三是否参与/拿满、燕窝推荐官是否参与、本周投放情况、本月已投放</strong>。
+        </div>
+      </section>
+
+      <div class="kpi-grid" id="actKpiGrid"></div>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>扫码数量排行（TOP 10）</h2>
+          <span class="tag">同数量按零消、拆条排序</span>
+        </div>
+        <div class="chart-box act-chart" style="height:280px;"><canvas id="actChart"></canvas></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>客户信息 · 投放跟踪</h2>
+        </div>
+        <div class="filters">
+          <input id="searchInput" class="input" placeholder="搜索门店 / 编码 / 负责人">
+          <select id="regionFilter" class="input">
+            <option value="">全部区县</option>
+          </select>
+          <select id="sortFilter" class="input">
+            <option value="rank">排名优先 (扫码)</option>
+            <option value="zeroRetail">零消数量优先</option>
+            <option value="unpack">拆条数量优先</option>
+            <option value="activity">活跃度优先</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="cust-table">
+            <thead>
+              <tr>
+                <th>排名</th>
+                <th>店招名称 / 类型</th>
+                <th>客户编码</th>
+                <th>负责人 / 电话</th>
+                <th>行政区划</th>
+                <th>档位</th>
+                <th>参与活动</th>
+                <th>本周投放情况</th>
+                <th class="num">本月已投放</th>
+                <th class="num">零消 / 拆条</th>
+              </tr>
+            </thead>
+            <tbody id="customerBody"></tbody>
+          </table>
+        </div>
+        <!-- 分页容器 -->
+        <div id="pagination" class="pagination" style="display:none;"></div>
+      </section>
+    </section>
+
+    <!-- ========== 素材 ========== -->
+    <section class="page" id="page-material">
+      <section class="card">
+        <div class="card-head"><h2>上传素材</h2></div>
+        <label class="upload-zone" for="materialInput">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 16V4m0 0L7 9m5-5l5 5"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+          </svg>
+          <div class="uz-title">点击上传素材</div>
+          <div class="uz-hint">支持图片 / 视频，可多选</div>
+        </label>
+        <input type="file" id="materialInput" accept="image/*,video/*" multiple hidden>
+      </section>
+      <section class="card">
+        <div class="card-head">
+          <h2>宣传素材库</h2>
+          <span class="tag" id="matCount">0 个</span>
+        </div>
+        <div class="material-grid" id="materialGrid"></div>
+      </section>
+    </section>
+
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="tab-item" data-tab="data">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/><path d="M2 20h20"/></svg>
+      <span>数据</span>
+    </button>
+    <button class="tab-item" data-tab="price">
+      <svg viewBox="0 0 24 24"><path d="M20.6 13.4L13.4 20.6a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.8" cy="7.8" r="1.4"/></svg>
+      <span>价格</span>
+    </button>
+    <button class="tab-item tab-main active" data-tab="home">
+      <span class="icon-badge">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      </span>
+      <span class="tab-label">概览</span>
+    </button>
+    <button class="tab-item" data-tab="act">
+      <svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 5h12l-2.5 4L17 13H5"/></svg>
+      <span>活动</span>
+    </button>
+    <button class="tab-item" data-tab="material">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L6 20"/></svg>
+      <span>素材</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+   * 1. 状态与默认数据
+   * =======================================================*/
+  const state = {
+    product: {
+      name: '温州小金砖细支',
+      sku: 'SKU-WZ-XJZ',
+      launchDate: '2025-01-01',
+      guidePrice: 100.0,
+      stock: 4800,
+      desc: '温州区域投放户数据看板'
+    },
+    customers: [],
+    sales: [
+      { month:'2025-01', qty:860, amt:86000 }, { month:'2025-02', qty:1120, amt:112000 },
+      { month:'2025-03', qty:1580, amt:158000 }, { month:'2025-04', qty:1840, amt:184000 },
+      { month:'2025-05', qty:2130, amt:213000 }, { month:'2025-06', qty:2460, amt:246000 }
+    ],
+    prices: [
+      { channel:'KA卖场', guidePrice:100.0, currentPrice:100.0, status:'' },
+      { channel:'便利店', guidePrice:100.0, currentPrice:98.0, status:'' },
+      { channel:'电商旗舰店', guidePrice:100.0, currentPrice:88.0, status:'' },
+      { channel:'社区团购', guidePrice:100.0, currentPrice:75.0, status:'' }
+    ],
+    materials: []
+  };
+
+  // 生成 35 条模拟数据用于测试分页
+  const mockTypes = ['A类客户', 'B类客户', 'C类客户', 'D类客户'];
+  const mockCounties = ['鹿城区', '瓯海区', '龙湾区', '瑞安市'];
+  const mockCategories = ['三十档', '二十九档'];
+  const mockDelivery = ['1条', '2条', '停投'];
+
+  for (let i = 1; i <= 35; i++) {
+    state.customers.push({
+      name: `零售客户测试店 ${i}`,
+      code: `3303011004${i.toString().padStart(2, '0')}`,
+      boss: `老板${i}`,
+      phone: `1380000${i.toString().padStart(4, '0')}`,
+      category: mockCategories[i % 2],
+      county: mockCounties[i % 4],
+      verify: i % 3 === 0 ? '否' : '是',
+      scanQty: i * 2,
+      zeroRetail: i,
+      unpack: Math.floor(i / 2),
+      type: mockTypes[i % 4],
+      actGood3: i % 2 === 0 ? '是' : '',
+      actGood3Full: i % 4 === 0 ? '是' : '',
+      actBird: i % 5 === 0 ? '是' : '',
+      weeklyDelivery: mockDelivery[i % 3],
+      monthlyDelivery: i % 5
+    });
+  }
+
+  /* =========================================================
+   * 2. 工具函数与本地存储
+   * =======================================================*/
+  const $ = id => document.getElementById(id);
+  const fmt = n => Number(n || 0).toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+  // 存数据到本地
+  function saveState() {
+    try {
+      const dataToSave = {
+        customers: state.customers,
+        product: state.product,
+        sales: state.sales,
+        prices: state.prices
+      };
+      localStorage.setItem('wz_xiaojinzhuan_data', JSON.stringify(dataToSave));
+    } catch (e) {
+      console.warn('本地存储失败，可能是空间已满', e);
+    }
+  }
+
+  // 从本地读取数据
+  function loadState() {
+    try {
+      const saved = localStorage.getItem('wz_xiaojinzhuan_data');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.customers && data.customers.length) state.customers = data.customers;
+        if (data.product) state.product = data.product;
+        if (data.sales && data.sales.length) state.sales = data.sales;
+        if (data.prices && data.prices.length) state.prices = data.prices;
+      }
+    } catch (e) {
+      console.warn('本地存储读取失败', e);
+    }
+  }
+
+  function num(v) {
+    if (typeof v === 'number') return isFinite(v) ? v : 0;
+    if (v == null) return 0;
+    const n = parseFloat(String(v).replace(/[,，\s¥$%件元次条]/g, ''));
+    return isFinite(n) ? n : 0;
+  }
+  function fmtDate(v) {
+    if (!v) return '';
+    if (v instanceof Date) {
+      const p = n => String(n).padStart(2, '0');
+      return `${v.getFullYear()}-${p(v.getMonth() + 1)}-${p(v.getDate())}`;
+    }
+    return String(v).trim().slice(0, 10);
+  }
+  function pick(row, aliases) {
+    for (const k in row) {
+      if (aliases.includes(String(k).trim())) {
+        const v = row[k];
+        if (v !== undefined && v !== null && v !== '') return v;
+      }
+    }
+    return '';
+  }
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+  function placeholder(text, c1, c2) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>
+      <rect width="480" height="300" fill="url(#g)"/>
+      <text x="50%" y="50%" fill="#ffffff" font-size="26" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">${text}</text>
+    </svg>`;
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  const isMobile = () => window.innerWidth <= 640;
+
+  function saveAsXLSX(wb, filename) {
+    if (typeof XLSX === 'undefined') { toast('Excel 组件未加载，请检查网络或刷新页面'); return; }
+    const isWeixin = /MicroMessenger/i.test(navigator.userAgent) || /QQ/i.test(navigator.userAgent);
+    if (isWeixin) { toast('浏览器限制：请点击右上角“在浏览器中打开”后再下载'); return; }
+    try {
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+      toast('已开始下载：' + filename);
+    } catch (err) { console.error(err); toast('下载失败，请检查浏览器权限'); }
+  }
+
+  state.materials = [
+    { id:'m1', name:'主视觉海报-横版', type:'image', size:'1.2 MB', date:'2025-06-10', src: placeholder('主视觉海报 · 横版', '#fceabb', '#b8860b') },
+    { id:'m2', name:'产品主图-白底', type:'image', size:'860 KB', date:'2025-06-10', src: placeholder('产品主图 · 白底', '#fceabb', '#d4af37') }
+  ];
+
+  /* =========================================================
+   * 3. 计算逻辑
+   * =======================================================*/
+  function computeScores() {
+    const list = state.customers;
+    if (!list.length) return;
+
+    list.forEach(c => {
+      const activityScore = num(c.zeroRetail) + num(c.unpack);
+      if (activityScore >= 30) c.activityLevel = '高活跃';
+      else if (activityScore >= 10) c.activityLevel = '中活跃';
+      else if (activityScore > 0) c.activityLevel = '低活跃';
+      else c.activityLevel = '沉默';
+    });
+
+    list.slice()
+      .sort((a, b) =>
+        num(b.scanQty) - num(a.scanQty) ||
+        num(b.zeroRetail) - num(a.zeroRetail) ||
+        num(b.unpack) - num(a.unpack))
+      .forEach((c, i) => { c.rank = i + 1; });
+  }
+
+  function priceStatusOf(p) {
+    if (p.status) return p.status;
+    const g = num(p.guidePrice), cur = num(p.currentPrice);
+    if (!g) return '正常';
+    const r = cur / g;
+    return r < 0.7 ? '破价' : r < 0.98 ? '促销' : '正常';
+  }
+
+  function calcMetrics() {
+    const totalScan = state.customers.reduce((s, c) => s + num(c.scanQty), 0);
+    const totalZero = state.customers.reduce((s, c) => s + num(c.zeroRetail), 0);
+    const totalUnpack = state.customers.reduce((s, c) => s + num(c.unpack), 0);
+    
+    const activeCustomers = state.customers.filter(c => num(c.scanQty) > 0 || num(c.zeroRetail) > 0 || num(c.unpack) > 0).length;
+    const verifyCount = state.customers.filter(c => c.verify === '是').length;
+
+    const regions = [...new Set(state.customers.map(c => c.county).filter(Boolean))];
+    const customerCount = state.customers.length;
+
+    const typeCounts = { 'A类客户': 0, 'B类客户': 0, 'C类客户': 0, 'D类客户': 0 };
+    state.customers.forEach(c => {
+      if (typeCounts[c.type] !== undefined) typeCounts[c.type]++;
+      else typeCounts['D类客户']++;
+    });
+
+    const statuses = state.prices.map(priceStatusOf);
+    const broken = statuses.filter(s => s === '破价').length;
+    const promo = statuses.filter(s => s === '促销').length;
+
+    let priceText = '正常', priceColor = 'var(--green)', priceHint = '全渠道按指导价销售';
+    if (broken > 0) {
+      priceText = '存在破价'; priceColor = 'var(--red)'; priceHint = `${broken} 个渠道低于指导价 30% 以上`;
+    } else if (promo > 0) {
+      priceText = '促销中'; priceColor = 'var(--orange)'; priceHint = `${promo} 个渠道促销`;
+    }
+
+    return {
+      totalScan, totalZero, totalUnpack, activeCustomers, verifyCount,
+      regionCount: regions.length, customerCount,
+      typeCounts,
+      priceText, priceColor, priceHint, broken, promo,
+      months: state.sales.length
+    };
+  }
+
+  /* =========================================================
+   * 4. 渲染
+   * =======================================================*/
+  function kpiHTML(items) {
+    return items.map(it => `
+      <div class="kpi" style="--brand:${it.color}">
+        <div class="label">${esc(it.label)}</div>
+        <div class="value${it.small ? ' small' : ''}" style="color:${it.color}" title="${esc(it.value)}">${esc(it.value)}</div>
+        <div class="hint">${esc(it.hint)}</div>
+      </div>`).join('');
+  }
+
+  function renderHero() {
+    const p = state.product;
+    const m = calcMetrics();
+    $('productName').textContent = p.name;
+    $('productSub').textContent = `${p.desc}`;
+    const stats = [
+      { k:'总客户数', v:fmt(m.customerCount) + ' 家' },
+      { k:'已认证', v:fmt(m.verifyCount) + ' 家' },
+      { k:'活跃客户', v:fmt(m.activeCustomers) + ' 家' },
+      { k:'价格状态', v:m.priceText }
+    ];
+    $('heroStats').innerHTML = stats.map(s => `<div class="hstat"><div class="k">${esc(s.k)}</div><div class="v">${esc(s.v)}</div></div>`).join('');
+  }
+
+  function renderHomeKPI() {
+    const m = calcMetrics();
+    const items = [
+      { label:'累计扫码量', value:`${fmt(m.totalScan)} 次`, hint:'所有投放户扫码总计', color:'var(--gold)' },
+      { label:'累计零消量', value:`${fmt(m.totalZero)} 次`, hint:'散包交易总计', color:'#b8860b' },
+      { label:'累计拆条量', value:`${fmt(m.totalUnpack)} 次`, hint:'拆条交易总计', color:'#8b6508' },
+      { label:'活跃客户占比', value:`${Math.round(m.activeCustomers / Math.max(1, m.customerCount) * 100)}%`, hint:`${m.activeCustomers} 家客户有动销`, color:'var(--orange)' }
+    ];
+    $('homeKpiGrid').innerHTML = kpiHTML(items);
+    $('trendTag').textContent = `共 ${m.customerCount} 家`;
+  }
+
+  function renderDataKPI() {
+    const m = calcMetrics();
+    const items = [
+      { label:'A类客户', value:`${m.typeCounts['A类客户']} 家`, hint:'核心重点户', color:'#b45309' },
+      { label:'B类客户', value:`${m.typeCounts['B类客户']} 家`, hint:'潜力发展户', color:'#0369a1' },
+      { label:'C类客户', value:`${m.typeCounts['C类客户']} 家`, hint:'常规维护户', color:'#6b21a8' },
+      { label:'D类客户', value:`${m.typeCounts['D类客户']} 家`, hint:'一般投放户', color:'#475569' }
+    ];
+    $('dataKpiGrid').innerHTML = kpiHTML(items);
+  }
+
+  function renderSalesTable() {
+    const byRegion = {};
+    state.customers.forEach(c => {
+      const rg = c.county || '未知区县';
+      if (!byRegion[rg]) byRegion[rg] = { count: 0, verified: 0, scan: 0 };
+      byRegion[rg].count++;
+      if (c.verify === '是') byRegion[rg].verified++;
+      byRegion[rg].scan += num(c.scanQty);
+    });
+
+    const body = $('salesTableBody');
+    const rows = Object.keys(byRegion).map(k => ({ region: k, ...byRegion[k] }));
+    
+    if (!rows.length) {
+      body.innerHTML = `<tr><td colspan="4" class="muted" style="text-align:center;padding:30px;border:none;">暂无数据</td></tr>`;
+      return;
+    }
+    body.innerHTML = rows.map(r => `
+      <tr>
+        <td class="c-month"><strong>${esc(r.region)}</strong></td>
+        <td class="num" data-label="客户数">${r.count}</td>
+        <td class="num" data-label="已认证" style="color:var(--green);font-weight:700;">${r.verified}</td>
+        <td class="num" data-label="扫码总计">${fmt(r.scan)}</td>
+      </tr>`).join('');
+  }
+
+  function renderPriceKPI() {
+    const m = calcMetrics();
+    const items = [
+      { label:'价格状态', value:m.priceText, hint:m.priceHint, color:m.priceColor },
+      { label:'促销渠道', value:`${m.promo} 个`, hint:'低于指导价', color:'var(--orange)' },
+      { label:'破价渠道', value:`${m.broken} 个`, hint:m.broken ? '需尽快处理' : '暂无破价风险', color:'var(--red)' }
+    ];
+    $('priceKpiGrid').innerHTML = kpiHTML(items);
+  }
+
+  function renderPrices() {
+    const m = calcMetrics();
+    $('priceTag').textContent = `${m.priceText} · ${m.priceHint}`;
+    if (!state.prices.length) {
+      $('priceBody').innerHTML = `<tr><td colspan="5" class="muted" style="text-align:center;padding:30px;border:none;">暂无数据</td></tr>`;
+      return;
+    }
+    $('priceBody').innerHTML = state.prices.map(p => {
+      const g = num(p.guidePrice), cur = num(p.currentPrice);
+      const rate = g ? cur / g : 1;
+      const st = priceStatusOf(p);
+      const cls = st === '破价' ? 'risk' : st === '促销' ? 'promo' : 'normal';
+      const rateColor = rate < 0.7 ? 'var(--red)' : rate < 0.98 ? 'var(--orange)' : 'var(--green)';
+      return `
+        <tr>
+          <td class="c-channel"><strong>${esc(p.channel)}</strong></td>
+          <td class="num" data-label="指导价">¥${g.toFixed(2)}</td>
+          <td class="num" data-label="当前价">¥${cur.toFixed(2)}</td>
+          <td class="num" data-label="折扣率" style="color:${rateColor};font-weight:700;">${Math.round(rate * 100)}%</td>
+          <td data-label="状态"><span class="badge ${cls}">${esc(st)}</span></td>
+        </tr>`;
+    }).join('');
+  }
+
+  /* ---------- 活动 & 客户 (分页) ---------- */
+  function renderActivityKPIs() {
+    const m = calcMetrics();
+    const items = [
+      { label:'总投放户', value:`${m.customerCount} 家`, hint:'已录入客户总数', color:'var(--gold)' },
+      { label:'活跃客户', value:`${m.activeCustomers} 家`, hint:'有扫码/零消/拆条', color:'#b8860b' },
+      { label:'扫码总计', value:`${fmt(m.totalScan)} 次`, hint:'核心考核指标', color:'#8b6508' },
+      { label:'零消/拆条', value:`${fmt(m.totalZero)} / ${fmt(m.totalUnpack)}`, hint:'活跃度支撑指标', color:'var(--orange)' }
+    ];
+    $('actKpiGrid').innerHTML = kpiHTML(items);
+  }
+
+  function renderRegionOptions() {
+    const regions = [...new Set(state.customers.map(c => c.county).filter(Boolean))];
+    const sel = $('regionFilter');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">全部区县</option>' + regions.map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('');
+    if (regions.includes(cur)) sel.value = cur;
+  }
+
+  function getFilteredCustomers() {
+    const kw = $('searchInput').value.trim();
+    const rg = $('regionFilter').value;
+    const sortKey = $('sortFilter') ? $('sortFilter').value : 'rank';
+
+    const rows = state.customers.filter(c => {
+      if (rg && c.county !== rg) return false;
+      if (kw) {
+        const text = `${c.name}${c.code}${c.boss}`;
+        if (!text.includes(kw)) return false;
+      }
+      return true;
+    });
+
+    if (sortKey === 'rank') {
+      rows.sort((a, b) => (a.rank || 9999) - (b.rank || 9999));
+    } else if (sortKey === 'zeroRetail') {
+      rows.sort((a, b) => num(b.zeroRetail) - num(a.zeroRetail) || (a.rank || 9999) - (b.rank || 9999));
+    } else if (sortKey === 'unpack') {
+      rows.sort((a, b) => num(b.unpack) - num(a.unpack) || (a.rank || 9999) - (b.rank || 9999));
+    } else if (sortKey === 'activity') {
+      const weight = { '高活跃': 4, '中活跃': 3, '低活跃': 2, '沉默': 1 };
+      rows.sort((a, b) => weight[b.activityLevel] - weight[a.activityLevel] || (a.rank || 9999) - (b.rank || 9999));
+    }
+    return rows;
+  }
+
+  // 分页状态
+  let currentPage = 1;
+  const pageSize = 10;
+
+  function renderCustomers() {
+    const allRows = getFilteredCustomers();
+    const totalRows = allRows.length;
+    const totalPages = Math.ceil(totalRows / pageSize);
+
+    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const startIdx = (currentPage - 1) * pageSize;
+    const rows = allRows.slice(startIdx, startIdx + pageSize);
+
+    if (!rows.length) {
+      $('customerBody').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:34px;border:none;" class="muted">暂无匹配数据</td></tr>`;
+      renderPagination(0, 0);
+      return;
+    }
+
+    $('customerBody').innerHTML = rows.map(c => {
+      const rk = c.rank || 0;
+      const rkCls = rk === 1 ? 'top1' : rk === 2 ? 'top2' : rk === 3 ? 'top3' : '';
+      
+      const vStatus = c.verify === '是' ? '已认证' : '未认证';
+      const vCls = c.verify === '是' ? 'verified' : 'unverified';
+      
+      const tCls = c.type.includes('A') ? 'type-A' : c.type.includes('B') ? 'type-B' : c.type.includes('C') ? 'type-C' : 'type-D';
+
+      let actTags = '';
+      if (c.actGood3 === '是') {
+        actTags += `<span class="act-tag good3">好事成三 ${c.actGood3Full === '是' ? '拿满' : '未满'}</span>`;
+      }
+      if (c.actBird === '是') {
+        actTags += `<span class="act-tag bird">燕窝推荐官 <span class="scan-badge">扫码 ${num(c.scanQty)}</span></span>`;
+      }
+      if (!actTags) actTags = '<span class="muted">-</span>';
+
+      const isDelivered = c.weeklyDelivery !== '未投放' && c.weeklyDelivery !== '停投';
+      const deliveryCls = isDelivered ? 'delivery-active' : 'delivery-none';
+
+      return `
+      <tr>
+        <td class="c-rank" data-label="排名"><span class="rank ${rkCls}">${rk}</span></td>
+        <td class="c-name" data-label="店招名称">
+          <div class="cust-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            ${esc(c.name)}
+            <span class="badge ${vCls}" style="font-size:10px;padding:1px 6px;">${vStatus}</span>
+            ${rk === 1 ? '<span class="crown">🏆</span>' : ''}
+          </div>
+          <div class="cust-sub" style="margin-top:4px;">
+            <span class="badge ${tCls}" style="font-size:10.5px;">${esc(c.type)}</span>
+          </div>
+        </td>
+        <td data-label="客户编码" class="muted">${esc(c.code || '-')}</td>
+        <td data-label="负责人/电话">
+          <div>${esc(c.boss || '-')}</div>
+          <div style="font-size:11px;color:var(--sub);margin-top:2px;">${esc(c.phone || '-')}</div>
+        </td>
+        <td data-label="行政区划">${esc(c.county || '-')}</td>
+        <td data-label="档位">
+          <div style="font-weight:700;color:#5c470d;">${esc(c.category || '-')}</div>
+        </td>
+        
+        <td data-label="参与活动">
+          <div style="display:flex; flex-wrap:wrap; gap:4px; max-width:180px; white-space:normal;">
+            ${actTags}
+          </div>
+        </td>
+
+        <td data-label="本周投放情况">
+          <span class="badge ${deliveryCls}" style="font-size:11.5px;">${esc(c.weeklyDelivery || '未投放')}</span>
+        </td>
+
+        <td class="num" data-label="本月已投放">
+          <strong style="color:var(--gold-deep);font-size:14px;">${num(c.monthlyDelivery) > 0 ? num(c.monthlyDelivery) + ' 条' : '-'}</strong>
+        </td>
+        
+        <td class="num" data-label="零消/拆条">
+          <div style="display:flex; gap:12px; justify-content:flex-end; background:#fcf6e3; padding:6px 10px; border-radius:8px;">
+            <div><span style="font-size:11px; color:var(--sub);">零消</span> <strong style="color:var(--gold-deep);font-size:14px;">${num(c.zeroRetail)}</strong></div>
+            <div><span style="font-size:11px; color:var(--sub);">拆条</span> <strong style="color:var(--gold-deep);font-size:14px;">${num(c.unpack)}</strong></div>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    renderPagination(totalPages, totalRows);
+  }
+
+  function renderPagination(totalPages, totalRows) {
+    const pag = $('pagination');
+    if (totalPages <= 1) {
+      pag.style.display = 'none';
+      pag.innerHTML = '';
+      return;
+    }
+    pag.style.display = 'flex';
+    
+    let html = `<button class="page-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>上一页</button>`;
+    
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    if (endPage - startPage + 1 < maxVisible) {
+      startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+    
+    if (startPage > 1) {
+      html += `<button class="page-btn" data-page="1">1</button>`;
+      if (startPage > 2) html += `<span class="page-ellipsis">...</span>`;
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    }
+    
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) html += `<span class="page-ellipsis">...</span>`;
+      html += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
+    }
+    
+    html += `<button class="page-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>`;
+    html += `<span class="page-info">共 ${totalRows} 条</span>`;
+    
+    pag.innerHTML = html;
+  }
+
+  function renderMaterials() {
+    const grid = $('materialGrid');
+    $('matCount').textContent = state.materials.length + ' 个';
+    if (!state.materials.length) {
+      grid.innerHTML = `<div class="empty-tip">暂无素材</div>`;
+      return;
+    }
+    grid.innerHTML = state.materials.map(m => {
+      let thumb;
+      if (m.type === 'video' && m.src) thumb = `<video src="${esc(m.src)}" muted preload="metadata" playsinline></video>`;
+      else if (m.type === 'image' && m.src) thumb = `<img src="${esc(m.src)}" alt="${esc(m.name)}" loading="lazy">`;
+      else thumb = `<div style="color:#b8a77e;font-size:12px;">▶ 视频（未上传）</div>`;
+      return `
+        <div class="mat-card">
+          <div class="mat-thumb">${thumb}</div>
+          <div class="mat-body">
+            <div class="mat-name" title="${esc(m.name)}">${esc(m.name)}</div>
+            <div class="mat-meta">${m.type === 'video' ? '视频' : '图片'} · ${esc(m.size || '-')} · ${esc(m.date || '-')}</div>
+          </div>
+          <div class="mat-actions">
+            <button data-dl="${esc(m.id)}">下载</button>
+            <button data-prev="${esc(m.id)}">预览</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function refreshContent() {
+    renderHero();
+    renderHomeKPI();
+    renderDataKPI();
+    renderPriceKPI();
+    renderActivityKPIs();
+    renderSalesTable();
+    renderRegionOptions();
+    renderCustomers();
+    renderPrices();
+    renderMaterials();
+  }
+
+  /* =========================================================
+   * 5. 图表
+   * =======================================================*/
+  let lineChart = null, regionChart = null, actChart = null;
+
+  function renderHomeChart() {
+    if (typeof Chart === 'undefined' || !$('salesChart')) return;
+    const mob = isMobile();
+    const tickFont = mob ? 10 : 12;
+
+    if (lineChart) { lineChart.destroy(); lineChart = null; }
+    lineChart = new Chart($('salesChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: state.sales.map(s => s.month),
+        datasets: [{
+          label: '扫码数量',
+          data: state.sales.map(s => num(s.qty)),
+          borderColor: '#d4af37',
+          backgroundColor: 'rgba(212,175,55,.15)',
+          borderWidth: mob ? 2 : 2.5,
+          fill: true, tension: .35,
+          pointRadius: mob ? 2.5 : 3,
+          pointBackgroundColor: '#d4af37',
+          pointBorderColor: '#fff', pointBorderWidth: 1.5
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#fcf6e3' }, ticks: { color: '#8b7b5b', font: { size: tickFont }, maxTicksLimit: 5 } },
+          x: { grid: { display: false }, ticks: { color: '#8b7b5b', font: { size: tickFont }, maxRotation: 0, autoSkip: true } }
+        }
+      }
+    });
+  }
+
+  function renderDataChart() {
+    if (typeof Chart === 'undefined' || !$('regionChart')) return;
+    const mob = isMobile();
+    const m = calcMetrics();
+    
+    const labels = ['A类客户', 'B类客户', 'C类客户', 'D类客户'];
+    const data = [m.typeCounts['A类客户'], m.typeCounts['B类客户'], m.typeCounts['C类客户'], m.typeCounts['D类客户']];
+    const colors = ['#d4af37', '#0369a1', '#6b21a8', '#94a3b8'];
+
+    if (regionChart) { regionChart.destroy(); regionChart = null; }
+    regionChart = new Chart($('regionChart').getContext('2d'), {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: mob ? '52%' : '58%',
+        plugins: {
+          legend: { position: mob ? 'bottom' : 'right', labels: { boxWidth: 9, padding: mob ? 8 : 12, font: { size: mob ? 10.5 : 12 }, color: '#6b5b32' } }
+        }
+      }
+    });
+  }
+
+  function renderActChart() {
+    if (typeof Chart === 'undefined' || !$('actChart')) return;
+    const mob = isMobile();
+    const tickFont = mob ? 10 : 12;
+
+    const rows = state.customers.slice()
+      .sort((a, b) => num(b.scanQty) - num(a.scanQty) || num(b.zeroRetail) - num(a.zeroRetail) || num(b.unpack) - num(a.unpack))
+      .slice(0, 10);
+
+    const actLabels = rows.map(c => {
+      const n = c.name;
+      const max = mob ? 7 : 12;
+      return n.length > max ? n.slice(0, max - 1) + '…' : n;
+    });
+    const actData = rows.map(c => num(c.scanQty));
+
+    if (actChart) { actChart.destroy(); actChart = null; }
+    actChart = new Chart($('actChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: actLabels,
+        datasets: [{
+          label: '扫码数量',
+          data: actData,
+          backgroundColor: 'rgba(212,175,55,.85)',
+          hoverBackgroundColor: '#b8860b',
+          borderRadius: 6,
+          barThickness: mob ? 11 : 15
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: items => rows[items[0].dataIndex] ? rows[items[0].dataIndex].name : '',
+              label: ctx => ` 扫码: ${ctx.parsed.x} 次`
+            }
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, grid: { color: '#fcf6e3' }, ticks: { color: '#8b7b5b', precision: 0, font: { size: tickFont } } },
+          y: { grid: { display: false }, ticks: { color: '#6b5b32', font: { size: mob ? 10 : 11.5 }, autoSkip: false } }
+        }
+      }
+    });
+  }
+
+  function renderTabChart(tab) {
+    if (tab === 'home') renderHomeChart();
+    else if (tab === 'data') renderDataChart();
+    else if (tab === 'act') renderActChart();
+  }
+
+  /* =========================================================
+   * 6. Tab 切换
+   * =======================================================*/
+  let currentTab = 'home';
+  function switchTab(tab) {
+    if (!tab) return;
+    currentTab = tab;
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + tab));
+    document.querySelectorAll('.tab-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => setTimeout(() => renderTabChart(tab), 20));
+  }
+
+  /* =========================================================
+   * 7. 素材下载
+   * =======================================================*/
+  function guessExt(m) { return m.type === 'video' ? '.mp4' : '.png'; }
+  function triggerDownload(href, name, newTab) {
+    const a = document.createElement('a'); a.href = href; a.download = name;
+    if (newTab) a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove();
+  }
+  async function downloadMaterial(id) {
+    const m = state.materials.find(x => x.id === id);
+    if (!m || !m.src) { toast('无可下载文件'); return; }
+    const fileName = m.name + guessExt(m);
+    try {
+      const res = await fetch(m.src); if (!res.ok) throw new Error('fetch failed');
+      const blob = await res.blob(); const url = URL.createObjectURL(blob);
+      triggerDownload(url, fileName); setTimeout(() => URL.revokeObjectURL(url), 3000);
+      toast('已开始下载：' + fileName);
+    } catch (e) { triggerDownload(m.src, fileName, true); toast('已在新窗口打开'); }
+  }
+  function previewMaterial(id) {
+    const m = state.materials.find(x => x.id === id);
+    if (!m || !m.src) { toast('暂无可预览的文件'); return; }
+    window.open(m.src, '_blank');
+  }
+
+  /* =========================================================
+   * 8. Excel 导入
+   * =======================================================*/
+  function readExcelFile(file) {
+    if (typeof XLSX === 'undefined') { toast('Excel 组件未加载'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array', cellDates: true });
+        applyWorkbook(wb);
+      } catch (err) { console.error(err); toast('Excel 解析失败：' + err.message); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function applyWorkbook(wb) {
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    
+    if (!rows.length) { toast('未识别到数据'); return; }
+
+    const mapped = rows.map((r, i) => {
+      let verify = String(pick(r, ['是否已认证', '认证状态', '认证']) || '').trim();
+      if (verify !== '是' && verify !== '否') verify = '否';
+
+      let wDel = String(pick(r, ['本周投放情况', '本周投放', '周投放']) || '').trim();
+      if (wDel === '停投条') wDel = '停投';
+      if (!wDel) wDel = '未投放';
+      else if (wDel !== '未投放' && wDel !== '停投' && !wDel.includes('条')) wDel = wDel + '条';
+
+      const mDel = num(pick(r, ['本月已投放', '本月累计投放', '本月投放', '月累计投放', '本月累计']));
+
+      return {
+        name: String(pick(r, ['店招名称', '客户名称', '门店名称', '客户']) || `客户${i + 1}`).trim(),
+        code: String(pick(r, ['客户编码', '烟草证号', '编码']) || '').trim(),
+        boss: String(pick(r, ['负责人', '老板名称', '老板']) || '').trim(),
+        phone: String(pick(r, ['经营者电话', '电话', '手机号']) || '').trim(),
+        category: String(pick(r, ['客户分类', '档位']) || '').trim(),
+        county: String(pick(r, ['行政区划', '区县']) || '').trim(),
+        verify: verify,
+        scanQty: num(pick(r, ['扫码数量'])),
+        zeroRetail: num(pick(r, ['零消数量'])),
+        unpack: num(pick(r, ['拆条数量'])),
+        type: String(pick(r, ['客户类型']) || 'D类客户').trim(),
+        actGood3: String(pick(r, ['好事成三是否参与']) || '').trim(),
+        actGood3Full: String(pick(r, ['好事成三是否拿满']) || '').trim(),
+        actBird: String(pick(r, ['燕窝推荐官是否参与']) || '').trim(),
+        weeklyDelivery: wDel,
+        monthlyDelivery: mDel
+      };
+    }).filter(c => c.name);
+
+    if (mapped.length) {
+      state.customers = mapped;
+      computeScores();
+      currentPage = 1;
+      refreshContent();
+      renderTabChart(currentTab);
+      saveState(); // 导入成功后保存到本地存储
+      toast(`成功导入 ${mapped.length} 条投放户数据，已保存到本地`);
+    } else {
+      toast('未识别到有效列，请对照表头说明');
+    }
+  }
+
+  /* =========================================================
+   * 9. Excel 导出 / 模板
+   * =======================================================*/
+  function todayStr() { const d = new Date(); const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`; }
+
+  function exportExcel() {
+    const wb = XLSX.utils.book_new();
+    const custRows = state.customers
+      .slice().sort((a, b) => (a.rank || 9999) - (b.rank || 9999))
+      .map(c => ({
+        '排名': c.rank, '店招名称': c.name, '客户编码': c.code, '负责人': c.boss, '经营者电话': c.phone,
+        '客户分类(档位)': c.category, '行政区划': c.county, '是否已认证': c.verify,
+        '扫码数量': c.scanQty, '零消数量': c.zeroRetail, '拆条数量': c.unpack, '客户类型': c.type,
+        '好事成三是否参与': c.actGood3, '好事成三是否拿满': c.actGood3Full, '燕窝推荐官是否参与': c.actBird,
+        '本周投放情况': c.weeklyDelivery, '本月已投放': c.monthlyDelivery,
+        '活跃度': c.activityLevel
+      }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(custRows), '投放户明细');
+    saveAsXLSX(wb, `温州小金砖投放户数据_${todayStr()}.xlsx`);
+  }
+
+  function downloadTemplate() {
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+      ['店招名称', '客户编码', '负责人', '经营者电话', '客户分类', '行政区划', '是否已认证', '扫码数量', '零消数量', '拆条数量', '客户类型', '好事成三是否参与', '好事成三是否拿满', '燕窝推荐官是否参与', '本周投放情况', '本月已投放'],
+      ['大红鹰烟酒行', '330301100430', '王眉虎', '13738306969', '三十档', '鹿城区', '是', 15, 20, 5, 'D类客户', '', '', '是', '1条', 4],
+      ['阿勇副食品商行', '330301104017', '王仙勇', '15605778227', '三十档', '瓯海区', '是', 22, 30, 12, 'C类客户', '', '', '是', '1条', 3]
+    ]), 'Sheet1');
+    saveAsXLSX(wb, '温州小金砖投放户导入模板.xlsx');
+  }
+
+  /* =========================================================
+   * 10. 事件绑定 & 初始化
+   * =======================================================*/
+  $('fileInput').addEventListener('change', e => { const f = e.target.files[0]; if (f) readExcelFile(f); e.target.value = ''; });
+  $('actFileInput').addEventListener('change', e => { const f = e.target.files[0]; if (f) { toast('正在解析...'); readExcelFile(f); } e.target.value = ''; });
+  $('exportBtn').addEventListener('click', exportExcel);
+  
+  // 重置按钮
+  $('resetBtn').addEventListener('click', () => {
+    if (confirm('确定要清空当前导入的数据，并恢复默认演示数据吗？')) {
+      localStorage.removeItem('wz_xiaojinzhuan_data');
+      location.reload();
+    }
+  });
+
+  ['searchInput', 'regionFilter', 'sortFilter'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('input', () => { currentPage = 1; renderCustomers(); });
+    el.addEventListener('change', () => { currentPage = 1; renderCustomers(); });
+  });
+
+  $('pagination').addEventListener('click', e => {
+    const btn = e.target.closest('.page-btn');
+    if (btn && !btn.disabled && !btn.classList.contains('active')) {
+      const page = parseInt(btn.dataset.page);
+      if (page && page !== currentPage) {
+        currentPage = page;
+        renderCustomers();
+        const tableWrap = document.querySelector('.cust-table');
+        if (tableWrap) tableWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+
+  $('materialInput').addEventListener('change', e => {
+    const files = Array.from(e.target.files || []);
+    files.forEach((f, i) => {
+      state.materials.unshift({
+        id: 'u' + Date.now() + i, name: f.name.replace(/\.[^.]+$/, ''),
+        type: f.type.startsWith('video') ? 'video' : 'image',
+        size: (f.size / 1024 / 1024).toFixed(1) + ' MB', date: todayStr().replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+        src: URL.createObjectURL(f)
+      });
+    });
+    if (files.length) { renderMaterials(); toast(`已添加 ${files.length} 个素材`); }
+    e.target.value = '';
+  });
+  $('materialGrid').addEventListener('click', e => {
+    const dl = e.target.closest('[data-dl]'); const pv = e.target.closest('[data-prev]');
+    if (dl) downloadMaterial(dl.dataset.dl);
+    if (pv) previewMaterial(pv.dataset.prev);
+  });
+
+  $('tabbar').addEventListener('click', e => {
+    const btn = e.target.closest('.tab-item'); if (btn) switchTab(btn.dataset.tab);
+  });
+
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (f && /\.(xlsx|xls|csv)$/i.test(f.name)) readExcelFile(f);
+  });
+
+  let mobileState = isMobile(), resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const nowMobile = isMobile();
+      if (nowMobile !== mobileState) { mobileState = nowMobile; renderTabChart(currentTab); }
+    }, 220);
+  });
+
+  // 启动时加载本地数据
+  loadState();
+  computeScores();
+  refreshContent();
+  switchTab('home');
+
+})();
+</script>
+</body>
+</html>
